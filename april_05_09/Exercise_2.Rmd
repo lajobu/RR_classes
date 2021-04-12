@@ -1,20 +1,46 @@
 ---
 title: "Exercise 2"
-author: "Wojciech Hardy; Michał Paliński"
-date: "3/21/2021"
-output: html_document
+author: "Jorge Bueno Perez"
+date: '`r format(Sys.time(), "%d-%m-%y")`'
+output: 
+  pdf_document:
+    toc: true
+params:
+  i: i
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-load("Data/season_1.RData")
+options(knitr.duplicate.label = "allow")
 ```
 
-# Game of Thrones - Season 1 summary in numbers
+```{r echo = F, results = 'hide', message= FALSE, warning = FALSE}
+library(readr)
+library(dplyr)
+library(rvest)
+library(rmarkdown)
+setwd("/Users/Lajobu/Desktop/RR_classes/april_05_09")
+```
+
+
+```{r echo = F, message= FALSE, warning = FALSE}
+load(paste0("Data/season_", params$i, ".RData"))
+site <-
+  paste0("https://en.wikipedia.org/wiki/Game_of_Thrones_(season_",
+         params$i ,
+         ")")
+```
+
+```{r echo = F, results = 'hide', message= FALSE, warning = FALSE}
+sample = site %>%
+  read_html() %>%
+  html_node(xpath = '/html/body/div[3]/h1') %>%
+  html_text()
+```
+
+# Game of Thrones - `r sample` summary in numbers
 
 ### __(*Warning:* spoilers ahead)__
-
-***
 
 ### Overview
 
@@ -24,29 +50,65 @@ Set on the fictional continents of Westeros and Essos, Game of Thrones has a lar
 
 ***
 
-### Season 1 summary
+### `r sample` summary 
 
-Season 1 of Game of Thrones consisted of 10 episodes that aired between April 17 and June 19, 2011 on HBO. The show gathered an average of 2.515 first-day TV viewers in the US, with the number growing from 2.22 to 3.04 million by the end of the season.
+```{r echo = F, results = 'hide', message= FALSE, warning = FALSE}
+sample1 = site %>%
+  read_html() %>%
+  html_node(xpath = '/html/body/div[3]/div[3]/div[5]/div[1]/p[2]') %>%
+  html_text(trim = TRUE)
+```
 
-The most popular episode of the season was "Fire and Blood", in which:
-
-> "The North secedes from the Seven Kingdoms and proclaims Robb as king. With Jaime as the Starks' prisoner and Robert's two brothers, Stannis and Renly, each challenging Joffrey's claim to the throne, Tywin appoints Tyrion as acting King's Hand, while Tywin fights to defend Joffrey's reign. Jon attempts to desert the Night's Watch to avenge Ned and join Robb, but his Night's Watch brothers convince him to honor his oath. Jon joins an expedition to search for Benjen Stark beyond the Wall. Yoren, a Night's Watch recruiter, smuggles Arya out of King's Landing disguised as a boy, while Joffrey intends to crown Sansa his queen, despite executing her father. Daenerys's baby is born deformed and dead, and Drogo is left in a vegetative state by the witch's treacherous magic. Daenerys compassionately ends Drogo's life. She places the three dragon eggs on Drogo's funeral pyre and sets it afire, also burning the witch alive. Ignoring Jorah's pleas, she walks into the flames. When the embers die the following morning, Daenerys is found in the ashes, unharmed, flanked by three newly-hatched baby dragons. Jorah and other witnesses kneel before her."
+`r sample1`
 
 ***
 
 You can see how the viewership of the episodes changed in Figure 1.
 
-```{r viewers_plot}
-plot(season_data$viewers, type="l", col="red", lwd=5, xlab = "Episode number", ylab = "1st day TV viewers in the US (millions)")
+```{r echo = F, message= FALSE, warning = FALSE}
+plot(
+  season_data$viewers,
+  type = "l",
+  col = "red",
+  lwd = 5,
+  xlab = "Episode number",
+  ylab = "1st day TV viewers in the US (millions)"
+)
 ```
 
 ***
 
 Finally, the episodes with the above-average viewership were:
 
-| No. in season | Title  | Directed by  |
-|:------        |:-----: |:------:      |
-| 5             | "The Wolf and the Lion"  | Brian Kirk      |
-| 8             | "The Pointy End" | Daniel Minahan      |
-| 9             | "Baelor" | Alan Taylor      |
-| 10            | "Fire and Blood" | Alan Taylor      |
+```{r echo = F, message= FALSE, warning = FALSE}
+table <-
+  data.frame(
+    "No. in season" = numeric(0),
+    "Title" = integer(0),
+    "Directed by" = integer(0)
+  )
+
+sample3 = site %>%
+  read_html() %>%
+  html_node(xpath = '/html/body/div[3]/div[3]/div[5]/div[1]/table[1]/tbody/tr[6]/td') %>%
+  html_text()
+num <- sample3 %>%
+  as.integer()
+
+r = 1
+for (r in c(1:num)) {
+  sample2 = site %>%
+    read_html() %>%
+    html_node(xpath = paste(
+      '/html/body/div[3]/div[3]/div[5]/div[1]/table[2]/tbody/tr[',
+      r * 2 ,
+      ']'
+    )) %>%
+    html_children() %>%
+    html_text(trim = TRUE)
+  table[r,] = c(sample2[2], sample2[3], sample2[4])
+  r = r + 1
+}
+
+knitr::kable(table, "simple")
+```

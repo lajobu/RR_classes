@@ -1,28 +1,8 @@
 # RMarkdown #2 
 # Reproducible Research 2021
-# Wojciech Hardy & Michal Palinski
-
-setwd("")
-
-# We need to load the necessary packages if we're operating through an R script.
-
-library(rmarkdown)
-
-# We can render an .Rmd document by using the render() function
-
-render("RMD_class_1.Rmd")
-
-# The render function can overwrite the document settings
-
-render("RMD_class_1.Rmd", output_format = "word_document")   # switches the output format
-
-render("RMD_class_1.Rmd", clean = FALSE)   # tells knitr to keep the intermediate files (e.g. ".md")
-
-# See https://www.rdocumentation.org/packages/rmarkdown/versions/2.6/topics/render for more
-
+# Jorge Bueno Perez
 
 #################
-
 
 # Exercise 2
 # 
@@ -40,4 +20,8 @@ render("RMD_class_1.Rmd", clean = FALSE)   # tells knitr to keep the intermediat
 # the report includes info for the correct season
 # 
 # - If you get that far, do a loop with render() to quickly create 8 reports in pdfs.
+
+for (seas in c(1:8)) {
+  rmarkdown::render("Exercise_2.Rmd", output_format = "pdf_document", output_file= paste0("Reports/season", seas, ".pdf"),  param = list(i = seas), clean = TRUE)
+}
 
