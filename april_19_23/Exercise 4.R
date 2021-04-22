@@ -1,6 +1,6 @@
 
 # Sets the path to the parent directory of RR classes
-setwd("C:\\Users\\whard\\OneDrive\\Desktop\\Reproducible research\\RR_classes\\RR_classes\\april_19_23")
+setwd("/Users/Lajobu/Desktop/RR_classes/april_19_23") 
 
 #   Import data from the O*NET database, at ISCO-08 occupation level.
 # The original data uses a version of SOC classification, but the data we load here
@@ -9,7 +9,7 @@ setwd("C:\\Users\\whard\\OneDrive\\Desktop\\Reproducible research\\RR_classes\\R
 # The O*NET database contains information for occupations in the USA, including
 # the tasks and activities typically associated with a specific occupation.
 
-task_data = read.csv("Data\\onet_tasks.csv")
+task_data = read.csv("Data/onet_tasks.csv")
 # isco08 variable is for occupation codes
 # the t_* variables are specific tasks conducted on the job
 
@@ -18,15 +18,15 @@ task_data = read.csv("Data\\onet_tasks.csv")
 # 1-digit ISCO occupation categories. (Check here for details: https://www.ilo.org/public/english/bureau/stat/isco/isco08/)
 library(readxl)                     
 
-isco1 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO1")
-isco2 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO2")
-isco3 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO3")
-isco4 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO4")
-isco5 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO5")
-isco6 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO6")
-isco7 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO7")
-isco8 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO8")
-isco9 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO9")
+# while loop to create 9 variables (ISCO + number)
+i <- 1
+while (i <= 9) {
+  assign(
+    paste0("ISCO", i),
+    read_excel("Data/Eurostat_employment_isco.xlsx", sheet = paste0("ISCO", i))
+  )
+  i <- i + 1
+}
 
 # We will focus on three countries, but perhaps we could clean this code to allow it
 # to easily run for all the countries in the sample?
